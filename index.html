@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,12 +43,13 @@
 </head>
 <body>
   <div class="container">
-    <h1>Compound Interest Calculator</h1>
-    <label for="monthly">Monthly Savings ($)</label>
-    <input id="monthly" type="number" min="0" step="0.01" placeholder="Amount" />
-    <label for="months">Number of Months</label>
-    <input id="months" type="number" min="1" step="1" placeholder="Months" />
-    <button id="calculate">Calculate</button>
+    <h1>Calculadora de Interés Compuesto</h1>
+    <p>La calculadora asume un retorno anual del 9.5% si lo metes en un CDT.</p>
+    <label for="monthly">Ahorro mensual ($)</label>
+    <input id="monthly" type="number" min="0" step="0.01" placeholder="Cantidad" />
+    <label for="months">Número de meses</label>
+    <input id="months" type="number" min="1" step="1" placeholder="Meses" />
+    <button id="calculate">Calcular</button>
     <h2 id="result"></h2>
   </div>
   <script>
@@ -55,15 +57,16 @@
       const P = parseFloat(document.getElementById('monthly').value);
       const months = parseInt(document.getElementById('months').value);
       if (isNaN(P) || isNaN(months) || P <= 0 || months <= 0) {
-        document.getElementById('result').textContent = 'Please enter valid numbers.';
+        document.getElementById('result').textContent = 'Por favor ingrese números válidos.';
         return;
       }
       const annualRate = 0.095;
       const r = annualRate / 12;
       const n = months;
       const FV = P * ((Math.pow(1 + r, n) - 1) / r);
+      const formatter = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' });
       document.getElementById('result').textContent =
-        'Future Value: $' + FV.toFixed(2);
+        'Valor futuro: ' + formatter.format(FV);
     });
   </script>
 </body>
