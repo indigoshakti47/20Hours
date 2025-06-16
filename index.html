@@ -3,23 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Interés Compuesto</title>
+  <title>Calculadoras de Ahorro e Inversión</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 2rem;
-      background: #f9f9f9;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
     }
-    .container {
+    .calculadoras {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .calculadora {
       background: #fff;
       border-radius: 8px;
       padding: 2rem;
       max-width: 400px;
-      margin: auto;
+      margin: 0 auto 2rem;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input[type="number"], input[type="range"] {
+    .calculadora h1 {
+      text-align: center;
+      margin-top: 0;
+    }
+    input[type="number"], input[type="range"], select {
       width: 100%;
       padding: .5rem;
       margin: .5rem 0 1rem 0;
@@ -29,38 +38,66 @@
     button {
       padding: .5rem 1rem;
       font-size: 1rem;
-      background: #007bff;
+      background: #6a11cb;
+      background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: 25px;
       cursor: pointer;
+      transition: opacity .3s;
     }
     button:hover {
-      background: #0056b3;
+      opacity: .8;
     }
-    #result.fade {
+    #result.fade, #result2.fade {
       opacity: 0;
       transition: opacity .5s ease-in-out;
     }
 
-    #result.show {
+    #result.show, #result2.show {
       opacity: 1;
+    }
+
+    @media (min-width: 700px) {
+      .calculadoras {
+        flex-wrap: nowrap;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Calculadora de Interés Compuesto</h1>
-    <p>Si no ingresas una tasa, asumimos un retorno anual del 9.5%.</p>
-    <label for="monthly">Ahorro mensual ($)</label>
-    <input id="monthly" type="number" min="0" step="0.01" placeholder="Cantidad" />
-    <label for="rate">Tasa anual (%)</label>
-    <input id="rate" type="number" min="0" step="0.01" placeholder="9.5" />
+  <div class="calculadoras">
+    <div class="calculadora">
+      <h1>Calculadora de Interés Compuesto</h1>
+      <p>Si no ingresas una tasa, asumimos un retorno anual del 9.5%.</p>
+      <label for="monthly">Ahorro mensual ($COP)</label>
+      <input id="monthly" type="number" min="0" step="0.01" placeholder="Cantidad" />
+      <label for="rate">Tasa anual (%)</label>
+      <input id="rate" type="number" min="0" step="0.01" placeholder="9.5" />
 
-    <label for="monthsRange">Meses de inversión: <span id="monthsValue">12</span></label>
-    <input id="monthsRange" type="range" min="1" max="360" value="12" />
-    <button id="calculate">Calcular</button>
-    <h2 id="result" class="fade"></h2>
+      <label for="monthsRange">Meses de inversión: <span id="monthsValue">12</span></label>
+      <input id="monthsRange" type="range" min="1" max="360" value="12" />
+      <button id="calculate">Calcular</button>
+      <h2 id="result" class="fade"></h2>
+    </div>
+    <div class="calculadora">
+      <h1>Deja un Mal Hábito 🙌</h1>
+      <label for="habit">¿Qué hábito quieres dejar?</label>
+      <select id="habit">
+        <option value="Alcohol">🍻 Alcohol</option>
+        <option value="Café">☕ Café</option>
+        <option value="Cigarrillos">🚬 Cigarrillos</option>
+        <option value="Comida chatarra">🍔 Comida chatarra</option>
+      </select>
+      <label for="qty">¿Cuántos al día?</label>
+      <input id="qty" type="number" min="1" step="1" />
+      <label for="price">Costo por unidad ($COP)</label>
+      <input id="price" type="number" min="0" step="0.01" />
+      <label for="daysRange">Días sin ese hábito: <span id="daysValue">30</span></label>
+      <input id="daysRange" type="range" min="1" max="365" value="30" />
+      <button id="calcHabit">Calcular</button>
+      <h2 id="result2" class="fade"></h2>
+    </div>
   </div>
   <script>
     const monthsRange = document.getElementById('monthsRange');
@@ -82,10 +119,36 @@
       const r = annualRate / 12;
       const n = months;
       const FV = P * ((Math.pow(1 + r, n) - 1) / r);
-      const formatter = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' });
+      const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' });
       document.getElementById('result').textContent =
-        'Valor futuro: ' + formatter.format(FV);
+        'Valor futuro: 💰' + formatter.format(FV);
       document.getElementById('result').classList.add('show');
+    });
+
+    const daysRange = document.getElementById('daysRange');
+    const daysValue = document.getElementById('daysValue');
+    daysRange.addEventListener('input', () => {
+      daysValue.textContent = daysRange.value;
+    });
+
+    document.getElementById('calcHabit').addEventListener('click', function() {
+      const qty = parseFloat(document.getElementById('qty').value);
+      const price = parseFloat(document.getElementById('price').value);
+      const days = parseInt(daysRange.value);
+      if (isNaN(qty) || isNaN(price) || isNaN(days) || qty <= 0 || price <= 0 || days <= 0) {
+        document.getElementById('result2').textContent = 'Por favor ingresa números válidos.';
+        document.getElementById('result2').classList.add('show');
+        return;
+      }
+      const dailySavings = qty * price;
+      const totalSavings = dailySavings * days;
+      const monthlySavings = dailySavings * 30;
+      const monthsInvest = 12;
+      const rate = 0.095 / 12;
+      const FV2 = monthlySavings * ((Math.pow(1 + rate, monthsInvest) - 1) / rate);
+      const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' });
+      document.getElementById('result2').innerHTML = `Ahorrarías ${formatter.format(totalSavings)} en ${days} días.<br>Si inviertes ese monto mensual durante 12 meses obtendrías 💰${formatter.format(FV2)}`;
+      document.getElementById('result2').classList.add('show');
     });
   </script>
 </body>
